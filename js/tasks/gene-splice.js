@@ -128,6 +128,13 @@ const GeneSpliceTask = {
       label.textContent = this.STRAND_LABELS[strandIdx];
       row.appendChild(label);
 
+      // Helix wrapper: backbone-left + segments + backbone-right
+      const helixWrap = document.createElement('div');
+      helixWrap.className = 'strand-row__helix';
+
+      // Left backbone (double helix rail)
+      helixWrap.appendChild(this._createBackboneSVG('left'));
+
       // Segments container
       const segContainer = document.createElement('div');
       segContainer.className = 'strand-row__segments';
@@ -145,9 +152,47 @@ const GeneSpliceTask = {
         segContainer.appendChild(seg);
       }
 
-      row.appendChild(segContainer);
+      helixWrap.appendChild(segContainer);
+
+      // Right backbone
+      helixWrap.appendChild(this._createBackboneSVG('right'));
+
+      row.appendChild(helixWrap);
       strandArea.appendChild(row);
     }
+  },
+
+  _createBackboneSVG(side) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'helix-backbone';
+
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 28 40');
+    svg.setAttribute('preserveAspectRatio', 'none');
+
+    // Two intertwining strands of the double helix
+    const path1 = document.createElementNS(ns, 'path');
+    const path2 = document.createElementNS(ns, 'path');
+
+    if (side === 'left') {
+      // Strand 1 curves right-to-left approaching the rungs
+      path1.setAttribute('d', 'M2,4 C14,10 14,14 6,20 C-2,26 -2,30 10,36');
+      // Strand 2 mirrors — crossing over strand 1
+      path2.setAttribute('d', 'M10,4 C-2,10 -2,14 6,20 C14,26 14,30 2,36');
+    } else {
+      // Mirror for right side
+      path1.setAttribute('d', 'M26,4 C14,10 14,14 22,20 C30,26 30,30 18,36');
+      path2.setAttribute('d', 'M18,4 C30,10 30,14 22,20 C14,26 14,30 26,36');
+    }
+
+    path2.style.opacity = '0.6';
+
+    svg.appendChild(path1);
+    svg.appendChild(path2);
+    wrapper.appendChild(svg);
+
+    return wrapper;
   },
 
   // =========================================

@@ -88,17 +88,67 @@
       text-transform: uppercase;
     }
 
-    .strand-row__segments {
+    /* --- DNA Helix Wrapper --- */
+    .strand-row__helix {
       display: flex;
-      gap: 10px;
-      justify-content: center;
+      align-items: center;
+      gap: 0;
+      position: relative;
     }
 
-    /* --- Segment (pill shape) --- */
+    /* Backbone rails (SVG wavy lines flanking segments) */
+    .helix-backbone {
+      width: 28px;
+      height: 100%;
+      flex-shrink: 0;
+    }
+
+    .helix-backbone svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .helix-backbone path {
+      fill: none;
+      stroke: rgba(68, 255, 162, 0.18);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+    }
+
+    .strand-row__segments {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* Horizontal rung connectors between backbone and segments */
+    .segment::before,
+    .segment::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 8px;
+      height: 3px;
+      background: rgba(68, 255, 162, 0.15);
+      border-radius: 1px;
+      transform: translateY(-50%);
+    }
+
+    .segment::before {
+      left: -8px;
+    }
+
+    .segment::after {
+      right: -8px;
+    }
+
+    /* --- Segment (base pair rung) --- */
     .segment {
-      width: 80px;
-      height: 48px;
-      border-radius: 24px;
+      width: 72px;
+      height: 36px;
+      border-radius: 6px;
       border: 2px solid #293136;
       background: #1A2228;
       cursor: pointer;
@@ -142,8 +192,8 @@
       border-color: #92AD3F;
     }
     .segment.colour-cytosine {
-      background: #50C878;
-      border-color: #50C878;
+      background: #9E71F7;
+      border-color: #9E71F7;
     }
 
     /* --- Locked (recalled strands — dimmed) --- */
@@ -303,9 +353,12 @@
     /* --- Responsive --- */
     @media (max-width: 480px) {
       .segment {
-        width: 60px;
-        height: 38px;
-        border-radius: 19px;
+        width: 54px;
+        height: 30px;
+        border-radius: 5px;
+      }
+      .helix-backbone {
+        width: 20px;
       }
       .palette-btn {
         width: 44px;
@@ -368,7 +421,7 @@
             <button class="palette-btn" data-colour="adenine" style="background: #44FFA2;" aria-label="Adenine"></button>
             <button class="palette-btn" data-colour="thymine" style="background: #ADE7CA;" aria-label="Thymine"></button>
             <button class="palette-btn" data-colour="guanine" style="background: #92AD3F;" aria-label="Guanine"></button>
-            <button class="palette-btn" data-colour="cytosine" style="background: #50C878;" aria-label="Cytosine"></button>
+            <button class="palette-btn" data-colour="cytosine" style="background: #9E71F7;" aria-label="Cytosine"></button>
           </div>
         </div>
       </div>
@@ -399,7 +452,7 @@
             <button class="palette-btn" data-colour="adenine" style="background: #44FFA2;" aria-label="Adenine"></button>
             <button class="palette-btn" data-colour="thymine" style="background: #ADE7CA;" aria-label="Thymine"></button>
             <button class="palette-btn" data-colour="guanine" style="background: #92AD3F;" aria-label="Guanine"></button>
-            <button class="palette-btn" data-colour="cytosine" style="background: #50C878;" aria-label="Cytosine"></button>
+            <button class="palette-btn" data-colour="cytosine" style="background: #9E71F7;" aria-label="Cytosine"></button>
           </div>
         </div>
       </div>
@@ -430,7 +483,7 @@
             <button class="palette-btn" data-colour="adenine" style="background: #44FFA2;" aria-label="Adenine"></button>
             <button class="palette-btn" data-colour="thymine" style="background: #ADE7CA;" aria-label="Thymine"></button>
             <button class="palette-btn" data-colour="guanine" style="background: #92AD3F;" aria-label="Guanine"></button>
-            <button class="palette-btn" data-colour="cytosine" style="background: #50C878;" aria-label="Cytosine"></button>
+            <button class="palette-btn" data-colour="cytosine" style="background: #9E71F7;" aria-label="Cytosine"></button>
           </div>
         </div>
       </div>
