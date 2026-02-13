@@ -1,0 +1,280 @@
+/* =============================================
+   PORTALS GAME — Task UI Base Styles
+   Reset, @font-face, CSS Variables, Overlay
+   ============================================= */
+
+/* --- Font Faces --- */
+@font-face {
+  font-family: 'Bungee';
+  src: url('../fonts/Bungee-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PP Supply Mono';
+  src: url('../fonts/PPSupplyMono-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --- Reset --- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0E1519;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- CSS Custom Properties (Global) --- */
+:root {
+  /* Base colors */
+  --bg-base: #0E1519;
+  --overlay-bg: rgba(15, 21, 25, 0.91);
+  --overlay-blur: 8px;
+
+  /* Frame */
+  --frame-border: #252B2C;
+  --frame-radius: 30px;
+  --frame-max-width: 1100px;
+
+  /* UI Colors */
+  --btn-border: #849399;
+  --label-border: #849399;
+  --text-body: #B5BEC8;
+  --text-subheader: #DBE3EA;
+  --text-heading: #C7E0EA;
+  --text-muted: rgba(199, 224, 234, 0.58);
+  --success-green: #44FFA2;
+  --error-red: #FF4444;
+
+  /* Gradient heading */
+  --heading-gradient: linear-gradient(to top, #7897A9 9.789%, white 141.82%);
+
+  /* Area theme colors (overridden by .theme-* classes) */
+  --area-primary: #50FFE8;
+  --area-secondary1: #9E71F7;
+  --area-secondary2: #C7C8D8;
+
+  /* Button */
+  --btn-hover-bg: rgba(255, 255, 255, 0.04);
+  --btn-confirm-bg: #44FFA2;
+  --btn-confirm-text: #151A1B;
+  --btn-radius: 50px;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-med: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+/* --- Task Overlay (Full Viewport — centered) --- */
+.task-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.task-overlay__bg {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-bg);
+  backdrop-filter: blur(var(--overlay-blur));
+  -webkit-backdrop-filter: blur(var(--overlay-blur));
+  z-index: -1;
+}
+
+/* --- Task Header (Area Label + Title) --- */
+.task-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 20px;
+  width: 100%;
+  max-width: 700px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.task-header__area-label {
+  font-family: 'Bungee', sans-serif;
+  font-size: 20px;
+  letter-spacing: 0.709px;
+  line-height: 1.2;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.task-header__title {
+  font-family: 'Bungee', sans-serif;
+  font-size: 40px;
+  letter-spacing: 0.8px;
+  line-height: 0.911;
+  background: var(--heading-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-transform: uppercase;
+}
+
+/* --- Close Button --- */
+.task-close {
+  position: fixed;
+  top: 45px;
+  right: 65px;
+  width: 34px;
+  height: 33px;
+  cursor: pointer;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.task-close:hover {
+  opacity: 0.8;
+  transform: scale(1.1);
+}
+
+.task-close svg {
+  width: 100%;
+  height: 100%;
+}
+
+.task-close line {
+  stroke: var(--text-heading);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* --- Task Frame (Content Container) --- */
+.task-frame {
+  width: 100%;
+  max-width: var(--frame-max-width);
+  border: none;
+  border-radius: var(--frame-radius);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 40px;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin-bottom: 20px;
+}
+
+/* --- Task Completion Overlay --- */
+.task-completion {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  background: rgba(14, 21, 25, 0.95);
+  border-radius: var(--frame-radius);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-slow);
+  z-index: 10;
+}
+
+.task-completion.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.task-completion__glow {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(68, 255, 162, 0.15) 0%, transparent 70%);
+  animation: pulseGlow 2s ease-in-out;
+  pointer-events: none;
+}
+
+.task-completion__text {
+  font-family: 'Bungee', sans-serif;
+  font-size: 32px;
+  letter-spacing: 0.64px;
+  color: var(--success-green);
+  text-transform: uppercase;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.task-completion.active .task-completion__text {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.task-completion__checkmark {
+  width: 48px;
+  height: 48px;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.4s ease 0.2s, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s;
+}
+
+.task-completion.active .task-completion__checkmark {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.task-completion__continue {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.task-completion__continue.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.6; }
+}
+
+/* --- Utility --- */
+.hidden { display: none !important; }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}

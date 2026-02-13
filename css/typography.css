@@ -1,0 +1,127 @@
+/* =============================================
+   PORTALS GAME — Typography System
+   Font hierarchy matching Figma guidelines
+   ============================================= */
+
+/* --- Heading 1 (Bungee, ~34px, gradient) --- */
+.text-h1 {
+  font-family: 'Bungee', sans-serif;
+  font-size: 50px;
+  letter-spacing: 0.686px;
+  line-height: 0.911;
+  background: var(--heading-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-transform: uppercase;
+}
+
+/* --- Heading 2 (Bungee, ~26px, gradient) --- */
+.text-h2 {
+  font-family: 'Bungee', sans-serif;
+  font-size: 26px;
+  letter-spacing: 0.515px;
+  line-height: 0.911;
+  background: var(--heading-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-transform: uppercase;
+}
+
+/* --- Heading 3 (Bungee, ~20px, gradient) --- */
+.text-h3 {
+  font-family: 'Bungee', sans-serif;
+  font-size: 20px;
+  letter-spacing: 0.4px;
+  line-height: 0.911;
+  background: var(--heading-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-transform: uppercase;
+}
+
+/* --- Subheader (PP Supply Mono, ~19px) --- */
+.text-subheader {
+  font-family: 'PP Supply Mono', sans-serif;
+  font-weight: 300;
+  font-size: 19px;
+  letter-spacing: 0.755px;
+  line-height: 1.55;
+  color: var(--text-subheader);
+}
+
+/* --- Body / Paragraph (PP Supply Mono, ~15px) --- */
+.text-body {
+  font-family: 'PP Supply Mono', sans-serif;
+  font-weight: 300;
+  font-size: 15px;
+  letter-spacing: 0.6px;
+  line-height: 1.55;
+  color: var(--text-body);
+}
+
+/* --- Small / Caption (PP Supply Mono, ~13px) --- */
+.text-small {
+  font-family: 'PP Supply Mono', sans-serif;
+  font-weight: 300;
+  font-size: 13px;
+  letter-spacing: 0.709px;
+  line-height: 1.33;
+  color: var(--text-body);
+}
+
+/* --- Muted text --- */
+.text-muted {
+  color: var(--text-muted);
+}
+
+/* --- Success text (Bungee, green) --- */
+.text-success {
+  font-family: 'Bungee', sans-serif;
+  font-size: 26px;
+  letter-spacing: 0.515px;
+  line-height: 0.911;
+  color: var(--success-green);
+  text-transform: uppercase;
+}
+
+/* --- Error text --- */
+.text-error {
+  font-family: 'Bungee', sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.515px;
+  color: var(--error-red);
+  text-transform: uppercase;
+}
+
+/* --- Area-themed text (uses area primary color) --- */
+.text-area-primary {
+  color: var(--area-primary);
+}
+
+.text-area-secondary1 {
+  color: var(--area-secondary1);
+}
+
+.text-area-secondary2 {
+  color: var(--area-secondary2);
+}
+
+/* --- Bungee utility (no gradient, solid color) --- */
+.text-bungee {
+  font-family: 'Bungee', sans-serif;
+  text-transform: uppercase;
+}
+
+/* --- PP Supply Mono utility --- */
+.text-mono {
+  font-family: 'PP Supply Mono', sans-serif;
+  font-weight: 300;
+}
+
+/* --- Text alignment --- */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }

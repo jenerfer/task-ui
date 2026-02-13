@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generator Power — Storage Bay Task</title>
+
+  <!-- Design System CSS -->
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/typography.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/themes.css">
+
+  <!-- Task-specific styles -->
+  <style>
+    /* --- Generator Layout --- */
+    .generator-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      width: 100%;
+      padding: 8px 0;
+    }
+
+    /* Canvas container */
+    .generator-visual {
+      position: relative;
+      width: 100%;
+      max-width: 860px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    #generator-canvas {
+      cursor: grab;
+      border-radius: 16px;
+    }
+
+    #generator-canvas:active {
+      cursor: grabbing;
+    }
+
+    /* Info below canvas */
+    .generator-info {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    /* Stability progress bar */
+    .stability-bar {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .stability-track {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(132, 147, 153, 0.2);
+      overflow: hidden;
+    }
+
+    .stability-fill {
+      height: 100%;
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.15s ease, background 0.3s ease;
+      background: linear-gradient(90deg, var(--area-secondary2), var(--area-primary));
+    }
+
+    /* Node status indicators */
+    .node-status {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .node-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      opacity: 0.3;
+      transition: opacity 0.5s ease;
+    }
+
+    .node-indicator.active {
+      opacity: 1;
+    }
+
+    .node-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--area-primary);
+      box-shadow: 0 0 6px var(--area-primary);
+    }
+
+    .node-indicator:not(.active) .node-dot {
+      background: rgba(132, 147, 153, 0.4);
+      box-shadow: none;
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 700px) {
+      .generator-visual {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ===== TASK OVERLAY ===== -->
+  <div class="task-overlay theme-storage">
+
+    <!-- Dark blur background -->
+    <div class="task-overlay__bg"></div>
+
+    <!-- Task Header -->
+    <div class="task-header">
+      <span class="task-header__area-label">Storage Bay</span>
+      <h1 class="task-header__title">Balance Generator Power Load</h1>
+    </div>
+
+    <!-- Close Button -->
+    <button class="task-close" aria-label="Close task">
+      <svg viewBox="0 0 34 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="2" y1="2" x2="32" y2="31" />
+        <line x1="32" y1="2" x2="2" y2="31" />
+      </svg>
+    </button>
+
+    <!-- Task Frame -->
+    <div class="task-frame">
+
+      <!-- ===== MAIN PHASE ===== -->
+      <div id="phase1" class="phase-container active">
+        <div class="generator-layout">
+
+          <!-- Canvas for dials + gauge -->
+          <div class="generator-visual">
+            <canvas id="generator-canvas"></canvas>
+          </div>
+
+          <!-- Info below canvas -->
+          <div class="generator-info">
+
+            <!-- Stability progress bar -->
+            <div class="stability-bar">
+              <span class="text-small text-muted">Generator Stability</span>
+              <div class="stability-track">
+                <div class="stability-fill" id="stability-indicator"></div>
+              </div>
+            </div>
+
+            <p class="instruction">
+              Drag the dials to keep total output in the safe zone.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== TASK COMPLETION OVERLAY ===== -->
+      <div class="task-completion">
+        <div class="task-completion__glow"></div>
+        <svg class="task-completion__checkmark" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="24" cy="24" r="22" stroke="#44FFA2" stroke-width="2" opacity="0.5"/>
+          <path d="M14 24L21 31L34 18" stroke="#44FFA2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p class="task-completion__text">Task Completed!</p>
+        <button class="btn btn--confirm task-completion__continue">Continue</button>
+      </div>
+
+    </div><!-- /task-frame -->
+
+  </div><!-- /task-overlay -->
+
+  <!-- Scripts -->
+  <script src="../js/audio.js"></script>
+  <script src="../js/task-shell.js"></script>
+  <script src="../js/tasks/generator-power.js"></script>
+
+</body>
+</html>

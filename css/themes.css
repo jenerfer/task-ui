@@ -1,0 +1,32 @@
+/* =============================================
+   PORTALS GAME — Area Theme Classes
+   Each area overrides CSS custom properties
+   ============================================= */
+
+/* --- Storage Bay (Yellow) --- */
+.theme-storage {
+  --area-primary: #FECE54;
+  --area-secondary1: #B1AEA4;
+  --area-secondary2: #528F83;
+}
+
+/* --- Medbay (Cyan / Teal) --- */
+.theme-medbay {
+  --area-primary: #50FFE8;
+  --area-secondary1: #9E71F7;
+  --area-secondary2: #C7C8D8;
+}
+
+/* --- Offices (Orange) --- */
+.theme-offices {
+  --area-primary: #EF7B54;
+  --area-secondary1: #6F959B;
+  --area-secondary2: #A69893;
+}
+
+/* --- Botanics (Green) --- */
+.theme-botanics {
+  --area-primary: #44FFA2;
+  --area-secondary1: #ADE7CA;
+  --area-secondary2: #92AD3F;
+}

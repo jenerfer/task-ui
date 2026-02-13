@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MRI Calibration — Medbay Task</title>
+
+  <!-- Design System CSS -->
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/typography.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/themes.css">
+
+  <!-- Task-specific styles -->
+  <style>
+    /* --- Phase 1: Ring Alignment --- */
+    .rings-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      width: 100%;
+      height: 100%;
+    }
+
+    .rings-visual {
+      position: relative;
+      width: 560px;
+      height: 560px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    #mri-rings-canvas {
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    #mri-rings-canvas:active {
+      transform: scale(0.98);
+    }
+
+    .rings-info {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      text-align: center;
+      max-width: 400px;
+    }
+
+    .rings-info__progress {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* Spacebar hint */
+    .key-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .key-hint kbd {
+      font-family: 'PP Supply Mono', sans-serif;
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      border: 1px solid rgba(132, 147, 153, 0.3);
+      border-radius: 4px;
+      padding: 3px 8px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* --- Phase 2: Frequency Calibration --- */
+    .freq-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      width: 100%;
+      padding: 16px 0;
+    }
+
+    .waveform-container {
+      width: 100%;
+      max-width: 800px;
+      position: relative;
+      border: 1px solid var(--frame-border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .waveform-legend {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      padding: 12px 0 0;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .sliders-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .slider-row .slider-label {
+      min-width: 100px;
+      text-align: right;
+    }
+
+    .slider-row .slider {
+      flex: 1;
+    }
+
+    /* Alignment bar */
+    .alignment-bar {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .alignment-track {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(132, 147, 153, 0.2);
+      overflow: hidden;
+    }
+
+    .alignment-fill {
+      height: 100%;
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.2s ease, background 0.3s ease;
+      background: linear-gradient(90deg, var(--area-secondary1), var(--area-primary));
+    }
+
+    #match-text {
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    #match-text:not(.hidden) {
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 700px) {
+      .rings-visual {
+        width: 320px;
+        height: 320px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ===== TASK OVERLAY ===== -->
+  <div class="task-overlay theme-medbay">
+
+    <!-- Dark blur background -->
+    <div class="task-overlay__bg"></div>
+
+    <!-- Task Header -->
+    <div class="task-header">
+      <span class="task-header__area-label">Medbay</span>
+      <h1 class="task-header__title">Calibrate MRI Magnetic Field</h1>
+    </div>
+
+    <!-- Close Button -->
+    <button class="task-close" aria-label="Close task">
+      <svg viewBox="0 0 34 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="2" y1="2" x2="32" y2="31" />
+        <line x1="32" y1="2" x2="2" y2="31" />
+      </svg>
+    </button>
+
+    <!-- Task Frame -->
+    <div class="task-frame">
+
+      <!-- ===== PHASE 1: Ring Alignment ===== -->
+      <div id="phase1" class="phase-container active">
+        <div class="rings-layout">
+
+          <!-- Canvas for rings -->
+          <div class="rings-visual">
+            <canvas id="mri-rings-canvas"></canvas>
+          </div>
+
+          <!-- Info below rings -->
+          <div class="rings-info">
+            <div class="rings-info__progress">
+              <div class="progress-dots">
+                <div class="progress-dot active"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+              </div>
+            </div>
+
+            <p class="instruction">
+              Stop the marker inside the green zone to align each ring.
+            </p>
+            <div class="key-hint">
+              <span class="text-small text-muted">Click or press</span>
+              <kbd>SPACE</kbd>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== PHASE 2: Frequency Calibration ===== -->
+      <div id="phase2" class="phase-container hidden">
+        <div class="freq-layout">
+
+          <h2 class="text-h2">Frequency Calibration</h2>
+          <p class="instruction">Adjust the sliders to match your waveform to the target signal.</p>
+
+          <!-- Waveform display -->
+          <div class="waveform-container">
+            <canvas id="waveform-canvas"></canvas>
+            <div class="waveform-legend">
+              <div class="legend-item">
+                <div class="legend-dot" style="background: var(--area-primary);"></div>
+                <span class="text-small">Target Signal</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background: var(--area-secondary1);"></div>
+                <span class="text-small">Your Signal</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sliders -->
+          <div class="sliders-container">
+            <div class="slider-row">
+              <span class="slider-label">Frequency</span>
+              <input type="range" id="freq-slider" class="slider" min="0" max="100" value="50">
+            </div>
+            <div class="slider-row">
+              <span class="slider-label">Amplitude</span>
+              <input type="range" id="amp-slider" class="slider" min="0" max="100" value="50">
+            </div>
+            <div class="slider-row">
+              <span class="slider-label">Phase</span>
+              <input type="range" id="phase-slider" class="slider" min="0" max="100" value="50">
+            </div>
+          </div>
+
+          <!-- Alignment indicator -->
+          <div class="alignment-bar">
+            <span class="text-small text-muted">Signal Alignment</span>
+            <div class="alignment-track">
+              <div class="alignment-fill" id="alignment-indicator"></div>
+            </div>
+          </div>
+
+          <!-- Match text (hidden until matched) -->
+          <div id="match-text" class="hidden" style="text-align: center;">
+            <p class="text-success">Frequency Locked!</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== TASK COMPLETION OVERLAY ===== -->
+      <div class="task-completion">
+        <div class="task-completion__glow"></div>
+        <svg class="task-completion__checkmark" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="24" cy="24" r="22" stroke="#44FFA2" stroke-width="2" opacity="0.5"/>
+          <path d="M14 24L21 31L34 18" stroke="#44FFA2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p class="task-completion__text">Task Completed!</p>
+        <button class="btn btn--confirm task-completion__continue">Continue</button>
+      </div>
+
+    </div><!-- /task-frame -->
+
+  </div><!-- /task-overlay -->
+
+  <!-- Scripts -->
+  <script src="../js/audio.js"></script>
+  <script src="../js/task-shell.js"></script>
+  <script src="../js/tasks/mri-calibration.js"></script>
+
+</body>
+</html>

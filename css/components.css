@@ -1,0 +1,287 @@
+/* =============================================
+   PORTALS GAME — UI Components
+   Buttons, labels, badges, sliders, task frame
+   ============================================= */
+
+/* --- Button Base --- */
+.btn {
+  font-family: 'Bungee', sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.709px;
+  line-height: 15px;
+  text-transform: uppercase;
+  border: 1px solid var(--btn-border);
+  border-radius: var(--btn-radius);
+  padding: 18px 31px;
+  cursor: pointer;
+  transition: background var(--transition-fast),
+              color var(--transition-fast),
+              border-color var(--transition-fast),
+              transform var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--text-heading);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  background: var(--btn-hover-bg);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* --- Button Confirm (green) --- */
+.btn--confirm {
+  background: var(--success-green);
+  color: var(--btn-confirm-text);
+  border-color: var(--success-green);
+}
+
+.btn--confirm:hover {
+  background: #3DE695;
+  border-color: #3DE695;
+}
+
+/* --- Button Area Primary (uses theme color) --- */
+.btn--area-primary {
+  background: var(--area-primary);
+  color: var(--btn-confirm-text);
+  border-color: var(--area-primary);
+}
+
+.btn--area-primary:hover {
+  opacity: 0.9;
+}
+
+/* --- Button Danger --- */
+.btn--danger {
+  background: transparent;
+  color: var(--error-red);
+  border-color: var(--error-red);
+}
+
+.btn--danger:hover {
+  background: rgba(255, 68, 68, 0.1);
+}
+
+/* --- Button Small --- */
+.btn--sm {
+  font-size: 13px;
+  padding: 12px 22px;
+}
+
+/* --- Button Large --- */
+.btn--lg {
+  font-size: 17px;
+  padding: 22px 40px;
+}
+
+/* --- Button Disabled --- */
+.btn:disabled,
+.btn.btn--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* --- Label Badge --- */
+.label {
+  font-family: 'Bungee', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.709px;
+  line-height: 15px;
+  color: var(--text-heading);
+  text-transform: uppercase;
+  border: 1px solid var(--label-border);
+  border-radius: 8px;
+  padding: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+/* --- Label with area color --- */
+.label--area {
+  border-color: var(--area-primary);
+  color: var(--area-primary);
+}
+
+/* --- Progress Indicator (dots) --- */
+.progress-dots {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.progress-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--area-primary);
+  background: transparent;
+  transition: background var(--transition-med),
+              box-shadow var(--transition-med);
+}
+
+.progress-dot.filled {
+  background: var(--area-primary);
+  box-shadow: 0 0 12px var(--area-primary);
+}
+
+.progress-dot.active {
+  animation: dotPulse 1s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { box-shadow: 0 0 4px var(--area-primary); }
+  50% { box-shadow: 0 0 16px var(--area-primary); }
+}
+
+/* --- Custom Slider --- */
+.slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.slider-label {
+  font-family: 'PP Supply Mono', sans-serif;
+  font-weight: 300;
+  font-size: 13px;
+  letter-spacing: 0.709px;
+  color: var(--text-body);
+  text-transform: uppercase;
+}
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(132, 147, 153, 0.3);
+  outline: none;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--area-primary);
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 8px rgba(80, 255, 232, 0.3);
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 16px var(--area-primary);
+  transform: scale(1.15);
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--area-primary);
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 8px rgba(80, 255, 232, 0.3);
+}
+
+/* Slider filled track (set via JS) */
+.slider-track-fill {
+  position: relative;
+}
+
+.slider-track-fill::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  height: 4px;
+  border-radius: 2px;
+  background: var(--area-primary);
+  pointer-events: none;
+  width: var(--slider-fill, 50%);
+}
+
+/* --- Card / Panel --- */
+.panel {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--frame-border);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+/* --- Divider --- */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--frame-border);
+  margin: 16px 0;
+}
+
+/* --- Phase Transition --- */
+.phase-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--transition-slow), transform var(--transition-slow);
+}
+
+.phase-container.exiting {
+  opacity: 0;
+  transform: scale(0.95);
+  pointer-events: none;
+}
+
+.phase-container.entering {
+  opacity: 0;
+  transform: scale(1.05);
+}
+
+.phase-container.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* --- Instruction Text --- */
+.instruction {
+  font-family: 'PP Supply Mono', sans-serif;
+  font-weight: 300;
+  font-size: 15px;
+  letter-spacing: 0.6px;
+  line-height: 1.55;
+  color: var(--text-body);
+  text-align: center;
+  margin-top: 16px;
+}
+
+/* --- Round Counter --- */
+.round-counter {
+  font-family: 'Bungee', sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.709px;
+  color: var(--text-heading);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
