@@ -61,40 +61,6 @@
       50% { opacity: 0.4; }
     }
 
-    /* --- Legend Toggle Button --- */
-    .legend-toggle {
-      font-family: 'Bungee', sans-serif;
-      font-size: 12px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      border: 1px solid var(--btn-border);
-      border-radius: 8px;
-      padding: 8px 14px;
-      cursor: pointer;
-      background: transparent;
-      color: var(--text-heading);
-      transition: background 0.15s ease, border-color 0.15s ease;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      user-select: none;
-    }
-
-    .legend-toggle:hover {
-      background: rgba(255,255,255,0.04);
-    }
-
-    .legend-toggle.active {
-      border-color: var(--area-primary);
-      color: var(--area-primary);
-      background: rgba(254, 206, 84, 0.08);
-    }
-
-    .legend-toggle__icon {
-      width: 14px;
-      height: 14px;
-    }
-
     /* --- Progress Indicator --- */
     .wiring-progress {
       font-family: 'PP Supply Mono', sans-serif;
@@ -129,77 +95,6 @@
       width: 100%;
       height: 100%;
       display: block;
-    }
-
-    /* --- Legend Overlay --- */
-    .legend-overlay {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.9);
-      background: rgba(14, 21, 25, 0.95);
-      border: 1px solid var(--area-primary);
-      border-radius: 16px;
-      padding: 20px 28px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease, transform 0.25s ease;
-      box-shadow: 0 0 40px rgba(254, 206, 84, 0.15);
-      z-index: 5;
-    }
-
-    .legend-overlay.visible {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translate(-50%, -50%) scale(1);
-    }
-
-    .legend-overlay__title {
-      font-family: 'Bungee', sans-serif;
-      font-size: 14px;
-      letter-spacing: 0.5px;
-      color: var(--area-primary);
-      text-transform: uppercase;
-      text-align: center;
-      margin-bottom: 4px;
-    }
-
-    .legend-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 6px 0;
-    }
-
-    .legend-row__color {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.15);
-      flex-shrink: 0;
-    }
-
-    .legend-row__arrow {
-      font-family: 'PP Supply Mono', sans-serif;
-      font-size: 14px;
-      color: var(--text-muted);
-    }
-
-    .legend-row__symbol {
-      font-size: 22px;
-      line-height: 1;
-    }
-
-    .legend-row__name {
-      font-family: 'PP Supply Mono', sans-serif;
-      font-weight: 300;
-      font-size: 13px;
-      letter-spacing: 0.4px;
-      color: var(--text-body);
-      text-transform: uppercase;
     }
 
     /* --- Hint Text --- */
@@ -301,33 +196,18 @@
       <div id="phase-wiring" class="phase-container active">
         <div class="wiring-layout">
 
-          <!-- Top Bar: Timer + Legend + Progress -->
+          <!-- Top Bar: Timer + Progress -->
           <div class="wiring-topbar">
             <div class="led-timer" id="timer-display">0:30</div>
-            <button class="legend-toggle" id="legend-btn">
-              <svg class="legend-toggle__icon" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/>
-                <line x1="4" y1="4.5" x2="10" y2="4.5" stroke="currentColor" stroke-width="1"/>
-                <line x1="4" y1="7" x2="10" y2="7" stroke="currentColor" stroke-width="1"/>
-                <line x1="4" y1="9.5" x2="8" y2="9.5" stroke="currentColor" stroke-width="1"/>
-              </svg>
-              Diagram
-            </button>
             <div class="wiring-progress">
               <span class="wiring-progress__count" id="progress-count">0</span>
               <span>/ 5</span>
             </div>
           </div>
 
-          <!-- Canvas + Legend Overlay -->
+          <!-- Canvas + Cooldown Overlay -->
           <div class="wiring-canvas-container">
             <canvas id="wiring-canvas"></canvas>
-
-            <!-- Legend Overlay (toggled) -->
-            <div class="legend-overlay" id="legend-panel">
-              <p class="legend-overlay__title">Wiring Diagram</p>
-              <div id="legend-rows"></div>
-            </div>
 
             <!-- Cooldown Overlay -->
             <div class="cooldown-overlay" id="cooldown-overlay">
@@ -338,7 +218,7 @@
           </div>
 
           <!-- Hint -->
-          <p class="wiring-hint">Click a cable, then click its matching terminal. Check the wiring diagram for colour-to-symbol mappings. Avoid the live wire!</p>
+          <p class="wiring-hint">Click a cable, then click the matching terminal to reconnect it. Avoid the live wire!</p>
 
         </div>
       </div>
