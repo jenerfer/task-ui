@@ -377,6 +377,9 @@ const LockboxTask = {
   },
 
   _addHistoryRow(guess, results) {
+    // Clear previous — only show most recent guess
+    this.historyEl.innerHTML = '';
+
     const row = document.createElement('div');
     row.className = 'guess-row';
 
@@ -388,9 +391,6 @@ const LockboxTask = {
     });
 
     this.historyEl.appendChild(row);
-
-    // Scroll history into view if it's growing
-    row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   },
 
   // =========================================
