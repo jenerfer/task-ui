@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delivery Audit — Offices Task</title>
+
+  <!-- Design System CSS -->
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/typography.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/themes.css">
+
+  <!-- Task-specific styles -->
+  <style>
+    /* --- File Transfer Layout --- */
+    .transfer-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      width: 100%;
+      padding: 16px 0;
+    }
+
+    /* --- File Icon (canvas-rendered retro folder) --- */
+    .file-visual {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    #file-canvas {
+      border-radius: 16px;
+    }
+
+    /* --- Action Button --- */
+    .transfer-action {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .btn--transfer {
+      font-family: 'Bungee', sans-serif;
+      font-size: 16px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 14px;
+      padding: 22px 48px;
+      cursor: pointer;
+      color: #0E1519;
+      background: var(--area-primary);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      user-select: none;
+      white-space: nowrap;
+      box-shadow: 0 0 20px rgba(239, 123, 84, 0.25);
+    }
+
+    .btn--transfer:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 30px rgba(239, 123, 84, 0.4);
+    }
+
+    .btn--transfer:active {
+      transform: scale(0.97);
+    }
+
+    .btn--transfer:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* --- Hint Text --- */
+    .transfer-hint {
+      font-family: 'PP Supply Mono', sans-serif;
+      font-weight: 300;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      line-height: 1.55;
+      color: var(--text-muted);
+      text-align: center;
+      max-width: 340px;
+    }
+
+    /* --- Progress Bar --- */
+    .progress-container {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .progress-label {
+      font-family: 'PP Supply Mono', sans-serif;
+      font-weight: 300;
+      font-size: 13px;
+      letter-spacing: 0.709px;
+      color: var(--text-body);
+      text-transform: uppercase;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(132, 147, 153, 0.15);
+      overflow: hidden;
+      border: 1px solid rgba(132, 147, 153, 0.2);
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      width: 0%;
+      transition: width 0.1s linear;
+      background: linear-gradient(90deg, var(--area-secondary1), var(--area-primary));
+      box-shadow: 0 0 10px var(--area-primary);
+    }
+
+    .progress-percent {
+      font-family: 'Bungee', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.5px;
+      color: var(--area-primary);
+    }
+
+    /* --- Error State --- */
+    .error-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 0;
+    }
+
+    .error-display__title {
+      font-family: 'Bungee', sans-serif;
+      font-size: 26px;
+      letter-spacing: 0.5px;
+      color: var(--error-red);
+      text-transform: uppercase;
+      text-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
+    }
+
+    .error-display__sub {
+      font-family: 'PP Supply Mono', sans-serif;
+      font-weight: 300;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    /* --- Step Indicator --- */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+
+    .step-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid var(--area-primary);
+      background: transparent;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .step-dot.filled {
+      background: var(--area-primary);
+      box-shadow: 0 0 10px var(--area-primary);
+    }
+
+    .step-dot.active {
+      animation: dotPulse 1s ease-in-out infinite;
+    }
+
+    .step-line {
+      width: 40px;
+      height: 2px;
+      background: rgba(132, 147, 153, 0.3);
+      border-radius: 1px;
+      transition: background 0.3s ease;
+    }
+
+    .step-line.filled {
+      background: var(--area-primary);
+      box-shadow: 0 0 6px var(--area-primary);
+    }
+
+    /* --- Send Confirmation Interstitial --- */
+    .confirm-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      width: 100%;
+      padding: 24px 0;
+      animation: confirmFadeIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes confirmFadeIn {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .confirm-checkmark {
+      position: relative;
+      width: 120px;
+      height: 120px;
+    }
+
+    .confirm-checkmark__ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px solid var(--area-primary);
+      box-shadow: 0 0 25px var(--area-primary), inset 0 0 15px rgba(239, 123, 84, 0.1);
+      animation: ringPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes ringPulse {
+      0%, 100% { box-shadow: 0 0 25px var(--area-primary), inset 0 0 15px rgba(239, 123, 84, 0.1); }
+      50% { box-shadow: 0 0 40px var(--area-primary), inset 0 0 20px rgba(239, 123, 84, 0.15); }
+    }
+
+    .confirm-checkmark__icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 48px;
+      height: 48px;
+    }
+
+    .confirm-checkmark__icon path {
+      stroke: var(--area-primary);
+      stroke-dasharray: 60;
+      stroke-dashoffset: 60;
+      animation: drawCheck 0.5s ease 0.3s forwards;
+    }
+
+    @keyframes drawCheck {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .confirm-title {
+      font-family: 'Bungee', sans-serif;
+      font-size: 24px;
+      letter-spacing: 0.5px;
+      color: var(--area-primary);
+      text-transform: uppercase;
+      text-shadow: 0 0 20px rgba(239, 123, 84, 0.3);
+    }
+
+    .confirm-sub {
+      font-family: 'PP Supply Mono', sans-serif;
+      font-weight: 300;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      line-height: 1.55;
+      color: var(--text-muted);
+      text-align: center;
+      max-width: 340px;
+    }
+
+    .confirm-countdown {
+      font-family: 'Bungee', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.4px;
+      color: var(--text-muted);
+      opacity: 0.5;
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 700px) {
+      .file-visual {
+        width: 160px;
+        height: 160px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ===== TASK OVERLAY ===== -->
+  <div class="task-overlay theme-offices">
+
+    <!-- Dark blur background -->
+    <div class="task-overlay__bg"></div>
+
+    <!-- Task Header -->
+    <div class="task-header">
+      <span class="task-header__area-label">Offices</span>
+      <h1 class="task-header__title">Send Delivery Audit</h1>
+    </div>
+
+    <!-- Close Button -->
+    <button class="task-close" aria-label="Close task">
+      <svg viewBox="0 0 34 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="2" y1="2" x2="32" y2="31" />
+        <line x1="32" y1="2" x2="2" y2="31" />
+      </svg>
+    </button>
+
+    <!-- Task Frame -->
+    <div class="task-frame">
+
+      <!-- ===== PHASE 1: SEND FILES ===== -->
+      <div id="phase-send" class="phase-container active">
+        <div class="transfer-layout">
+
+          <!-- Step Indicator -->
+          <div class="step-indicator">
+            <div class="step-dot active" id="step-dot-1"></div>
+            <div class="step-line" id="step-line"></div>
+            <div class="step-dot" id="step-dot-2"></div>
+          </div>
+
+          <!-- File Icon Canvas -->
+          <div class="file-visual">
+            <canvas id="file-canvas"></canvas>
+          </div>
+
+          <!-- Action Area -->
+          <div class="transfer-action" id="send-action">
+            <button class="btn--transfer" id="send-btn">Send Delivery Files</button>
+            <p class="transfer-hint">After sending file, please confirm receipt on storage computer in storage bay to complete task</p>
+          </div>
+
+          <!-- Progress (hidden until sending) -->
+          <div class="progress-container hidden" id="send-progress">
+            <span class="progress-label" id="progress-label">Sending...</span>
+            <div class="progress-track">
+              <div class="progress-fill" id="send-fill"></div>
+            </div>
+            <span class="progress-percent" id="send-percent">0%</span>
+          </div>
+
+          <!-- Error (hidden until fail) -->
+          <div class="error-display hidden" id="send-error">
+            <p class="error-display__title">Error Sending</p>
+            <p class="error-display__sub">Please try again</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== SEND CONFIRMATION INTERSTITIAL ===== -->
+      <div id="phase-confirm" class="phase-container hidden">
+        <div class="confirm-layout">
+
+          <!-- Step Indicator (step 1 filled) -->
+          <div class="step-indicator">
+            <div class="step-dot filled"></div>
+            <div class="step-line filled"></div>
+            <div class="step-dot"></div>
+          </div>
+
+          <!-- Checkmark Icon -->
+          <div class="confirm-checkmark">
+            <div class="confirm-checkmark__ring"></div>
+            <svg class="confirm-checkmark__icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 24L21 33L36 16" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <p class="confirm-title">File Successfully Sent</p>
+          <p class="confirm-sub">Go to Storage Bay computer to receive files</p>
+          <p class="confirm-countdown" id="confirm-countdown"></p>
+
+        </div>
+      </div>
+
+      <!-- ===== PHASE 2: RECEIVE FILES ===== -->
+      <div id="phase-receive" class="phase-container hidden">
+        <div class="transfer-layout">
+
+          <!-- Step Indicator -->
+          <div class="step-indicator">
+            <div class="step-dot filled" id="step-dot-1b"></div>
+            <div class="step-line filled" id="step-line-b"></div>
+            <div class="step-dot active" id="step-dot-2b"></div>
+          </div>
+
+          <!-- File Icon Canvas -->
+          <div class="file-visual">
+            <canvas id="file-canvas-receive"></canvas>
+          </div>
+
+          <!-- Action Area -->
+          <div class="transfer-action" id="receive-action">
+            <button class="btn--transfer" id="receive-btn">Receive Delivery Files</button>
+          </div>
+
+          <!-- Progress (hidden until receiving) -->
+          <div class="progress-container hidden" id="receive-progress">
+            <span class="progress-label" id="receive-progress-label">Receiving...</span>
+            <div class="progress-track">
+              <div class="progress-fill" id="receive-fill"></div>
+            </div>
+            <span class="progress-percent" id="receive-percent">0%</span>
+          </div>
+
+          <!-- Error (hidden until fail) -->
+          <div class="error-display hidden" id="receive-error">
+            <p class="error-display__title">Error Receiving</p>
+            <p class="error-display__sub">Please try again</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== TASK COMPLETION OVERLAY ===== -->
+      <div class="task-completion">
+        <div class="task-completion__glow"></div>
+        <svg class="task-completion__checkmark" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="24" cy="24" r="22" stroke="#44FFA2" stroke-width="2" opacity="0.5"/>
+          <path d="M14 24L21 31L34 18" stroke="#44FFA2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p class="task-completion__text">Task Completed!</p>
+        <button class="btn btn--confirm task-completion__continue">Continue</button>
+      </div>
+
+    </div><!-- /task-frame -->
+
+  </div><!-- /task-overlay -->
+
+  <!-- Scripts -->
+  <script src="../js/audio.js"></script>
+  <script src="../js/task-shell.js"></script>
+  <script src="../js/tasks/delivery-audit.js"></script>
+
+</body>
+</html>
