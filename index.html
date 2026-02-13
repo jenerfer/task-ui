@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portals — Task UI</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/typography.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    body {
+      background: #0E1519;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .menu {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+    .menu h1 {
+      font-family: 'Bungee', sans-serif;
+      font-size: 32px;
+      background: linear-gradient(to top, #7897A9 10%, white 140%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0 0 8px;
+    }
+    .menu a {
+      display: block;
+      padding: 14px 40px;
+      border: 1px solid #849399;
+      border-radius: 50px;
+      color: #C7E0EA;
+      text-decoration: none;
+      font-family: 'Bungee', sans-serif;
+      font-size: 15px;
+      letter-spacing: 0.7px;
+      transition: background 0.2s;
+      text-align: center;
+      min-width: 260px;
+    }
+    .menu a:hover {
+      background: rgba(255,255,255,0.04);
+    }
+  </style>
+</head>
+<body>
+  <div class="menu">
+    <h1>Task Demos</h1>
+    <a href="tasks/mri-calibration.html">MRI Calibration — Medbay</a>
+    <a href="tasks/generator-power.html">Generator Power — Storage Bay</a>
+  </div>
+</body>
+</html>
