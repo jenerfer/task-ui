@@ -242,7 +242,7 @@ const WiringTask = {
       const yRange = h * 0.85;
       const midY = h * 0.5;
       const cp1y = midY + (Math.random() - 0.5) * yRange;
-      const cp2y = midY + (Math.random() - 0.5) * yRange;
+      let cp2y = midY + (Math.random() - 0.5) * yRange;
       const cp3y = midY + (Math.random() - 0.5) * yRange;
 
       // Force cp2 to the opposite side of midY from cp1 to create S-curves
