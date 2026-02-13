@@ -205,6 +205,90 @@
       box-shadow: 0 0 6px var(--area-primary);
     }
 
+    /* --- Send Confirmation Interstitial --- */
+    .confirm-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      width: 100%;
+      padding: 24px 0;
+      animation: confirmFadeIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes confirmFadeIn {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .confirm-checkmark {
+      position: relative;
+      width: 120px;
+      height: 120px;
+    }
+
+    .confirm-checkmark__ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px solid var(--area-primary);
+      box-shadow: 0 0 25px var(--area-primary), inset 0 0 15px rgba(239, 123, 84, 0.1);
+      animation: ringPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes ringPulse {
+      0%, 100% { box-shadow: 0 0 25px var(--area-primary), inset 0 0 15px rgba(239, 123, 84, 0.1); }
+      50% { box-shadow: 0 0 40px var(--area-primary), inset 0 0 20px rgba(239, 123, 84, 0.15); }
+    }
+
+    .confirm-checkmark__icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 48px;
+      height: 48px;
+    }
+
+    .confirm-checkmark__icon path {
+      stroke: var(--area-primary);
+      stroke-dasharray: 60;
+      stroke-dashoffset: 60;
+      animation: drawCheck 0.5s ease 0.3s forwards;
+    }
+
+    @keyframes drawCheck {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .confirm-title {
+      font-family: 'Bungee', sans-serif;
+      font-size: 24px;
+      letter-spacing: 0.5px;
+      color: var(--area-primary);
+      text-transform: uppercase;
+      text-shadow: 0 0 20px rgba(239, 123, 84, 0.3);
+    }
+
+    .confirm-sub {
+      font-family: 'PP Supply Mono', sans-serif;
+      font-weight: 300;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      line-height: 1.55;
+      color: var(--text-muted);
+      text-align: center;
+      max-width: 340px;
+    }
+
+    .confirm-countdown {
+      font-family: 'Bungee', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.4px;
+      color: var(--text-muted);
+      opacity: 0.5;
+    }
+
     /* --- Responsive --- */
     @media (max-width: 700px) {
       .file-visual {
@@ -275,6 +359,32 @@
             <p class="error-display__title">Error Sending</p>
             <p class="error-display__sub">Please try again</p>
           </div>
+
+        </div>
+      </div>
+
+      <!-- ===== SEND CONFIRMATION INTERSTITIAL ===== -->
+      <div id="phase-confirm" class="phase-container hidden">
+        <div class="confirm-layout">
+
+          <!-- Step Indicator (step 1 filled) -->
+          <div class="step-indicator">
+            <div class="step-dot filled"></div>
+            <div class="step-line filled"></div>
+            <div class="step-dot"></div>
+          </div>
+
+          <!-- Checkmark Icon -->
+          <div class="confirm-checkmark">
+            <div class="confirm-checkmark__ring"></div>
+            <svg class="confirm-checkmark__icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 24L21 33L36 16" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <p class="confirm-title">File Successfully Sent</p>
+          <p class="confirm-sub">Go to Medbay computer in reception to receive files</p>
+          <p class="confirm-countdown" id="confirm-countdown"></p>
 
         </div>
       </div>

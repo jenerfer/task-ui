@@ -147,7 +147,8 @@ const FileTransferTask = {
     this.phase = 'sent';
     this.fileAnim.particles = [];
 
-    AudioManager.play('hit');
+    // Play sci-fi confirmation tone
+    this._playConfirmTone();
 
     // Update step dots in send phase
     const dot1 = document.getElementById('step-dot-1');
@@ -155,10 +156,35 @@ const FileTransferTask = {
     if (dot1) { dot1.classList.add('filled'); dot1.classList.remove('active'); }
     if (line) line.classList.add('filled');
 
-    // Brief pause then transition to receive
+    // Hide send progress
+    document.getElementById('send-progress').classList.add('hidden');
+
+    // Brief pause then show confirmation interstitial
     setTimeout(() => {
-      this._transitionToReceive();
-    }, 1000);
+      this._showSendConfirmation();
+    }, 600);
+  },
+
+  _showSendConfirmation() {
+    const sendPhase = document.getElementById('phase-send');
+    const confirmPhase = document.getElementById('phase-confirm');
+
+    TaskShell.transitionPhase(sendPhase, confirmPhase, () => {
+      // 5 second countdown then transition to receive
+      let remaining = 5;
+      const countdownEl = document.getElementById('confirm-countdown');
+
+      const tick = () => {
+        if (remaining <= 0) {
+          this._transitionToReceive();
+          return;
+        }
+        countdownEl.textContent = 'Continuing in ' + remaining + 's...';
+        remaining--;
+        setTimeout(tick, 1000);
+      };
+      tick();
+    });
   },
 
   /* =========================================
@@ -179,11 +205,11 @@ const FileTransferTask = {
     if (areaLabel) areaLabel.textContent = 'Medbay';
     if (title) title.textContent = 'Receive Medical Files';
 
-    // Phase transition
-    const sendPhase = document.getElementById('phase-send');
+    // Phase transition from confirmation interstitial
+    const confirmPhase = document.getElementById('phase-confirm');
     const receivePhase = document.getElementById('phase-receive');
 
-    TaskShell.transitionPhase(sendPhase, receivePhase, () => {
+    TaskShell.transitionPhase(confirmPhase, receivePhase, () => {
       this._setupReceivePhase();
     });
   },
@@ -531,6 +557,65 @@ const FileTransferTask = {
     const scanY = ((t * 40) % h);
     ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
     ctx.fillRect(0, scanY, w, 2);
+  },
+
+  /* =========================================
+     AUDIO
+     ========================================= */
+
+  /**
+   * Sci-fi confirmation tone — ascending chime with reverb tail
+   */
+  _playConfirmTone() {
+    AudioManager.init();
+    const ctx = AudioManager.ctx;
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    const master = AudioManager.masterGain;
+
+    // Low warm pad sweep
+    const pad = ctx.createOscillator();
+    const padGain = ctx.createGain();
+    const padFilter = ctx.createBiquadFilter();
+    pad.type = 'sine';
+    pad.frequency.setValueAtTime(220, t);
+    pad.frequency.exponentialRampToValueAtTime(440, t + 0.8);
+    padFilter.type = 'lowpass';
+    padFilter.frequency.value = 800;
+    padGain.gain.setValueAtTime(0.12, t);
+    padGain.gain.linearRampToValueAtTime(0.08, t + 0.5);
+    padGain.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
+    pad.connect(padFilter).connect(padGain).connect(master);
+    pad.start(t);
+    pad.stop(t + 1.3);
+
+    // Three ascending chime notes
+    const notes = [660, 880, 1100];
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const start = t + i * 0.15;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.15, start + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.6);
+      osc.connect(gain).connect(master);
+      osc.start(start);
+      osc.stop(start + 0.65);
+    });
+
+    // Subtle high shimmer
+    const shimmer = ctx.createOscillator();
+    const shimGain = ctx.createGain();
+    shimmer.type = 'sine';
+    shimmer.frequency.value = 2200;
+    shimGain.gain.setValueAtTime(0, t + 0.4);
+    shimGain.gain.linearRampToValueAtTime(0.04, t + 0.5);
+    shimGain.gain.exponentialRampToValueAtTime(0.001, t + 1.5);
+    shimmer.connect(shimGain).connect(master);
+    shimmer.start(t + 0.4);
+    shimmer.stop(t + 1.6);
   },
 
   /* =========================================
