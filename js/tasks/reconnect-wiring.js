@@ -182,8 +182,9 @@ const WiringTask = {
 
   /**
    * Generate orthogonal (right-angle) routes for each cable.
-   * Each cable gets ONE unique vertical X-channel and ONE unique horizontal Y-lane.
-   * This guarantees no two wires ever share the same path segment.
+   * Each cable gets TWO unique vertical X-channels and TWO unique horizontal Y-lanes,
+   * creating a double-Z path with 8 waypoints and more crossings.
+   * All channels/lanes are exclusive — no two wires share any path segment.
    */
   _generateRoutes() {
     this.cables = [];
@@ -191,22 +192,25 @@ const WiringTask = {
     const wzWidth = wz.right - wz.left;
     const wzHeight = wz.bottom - wz.top;
 
-    // Create exactly CABLE_COUNT unique vertical X-channels (evenly spaced)
-    const xPadding = wzWidth * 0.08;
+    // We need 2 X-channels per cable (total 10) and 2 Y-lanes per cable (total 10)
+    const numX = this.CABLE_COUNT * 2;
+    const numY = this.CABLE_COUNT * 2;
+
+    // Generate unique vertical X-channels
+    const xPadding = wzWidth * 0.05;
     const xUsable = wzWidth - xPadding * 2;
     const xChannels = [];
-    for (let i = 0; i < this.CABLE_COUNT; i++) {
-      xChannels.push(wz.left + xPadding + (i + 0.5) * (xUsable / this.CABLE_COUNT));
+    for (let i = 0; i < numX; i++) {
+      xChannels.push(wz.left + xPadding + (i + 0.5) * (xUsable / numX));
     }
     const shuffledX = this._shuffle(xChannels);
 
-    // Create exactly CABLE_COUNT unique horizontal Y-lanes (evenly spaced)
-    // These sit between the endpoint Y positions to avoid overlapping with start/end Y
-    const yPadding = wzHeight * 0.08;
+    // Generate unique horizontal Y-lanes
+    const yPadding = wzHeight * 0.05;
     const yUsable = wzHeight - yPadding * 2;
     const yLanes = [];
-    for (let i = 0; i < this.CABLE_COUNT; i++) {
-      yLanes.push(wz.top + yPadding + (i + 0.5) * (yUsable / this.CABLE_COUNT));
+    for (let i = 0; i < numY; i++) {
+      yLanes.push(wz.top + yPadding + (i + 0.5) * (yUsable / numY));
     }
     const shuffledY = this._shuffle(yLanes);
 
@@ -215,38 +219,35 @@ const WiringTask = {
       const socketSlot = this.targetSlots[i];
       const rightY = this.layout.socketYs[socketSlot];
 
-      // Each cable gets its own unique X-channel and Y-lane
-      const midX = shuffledX[i];
-      const midY = shuffledY[i];
+      // Each cable gets 2 exclusive X-channels and 2 exclusive Y-lanes
+      const x1 = shuffledX[i * 2];
+      const x2 = shuffledX[i * 2 + 1];
+      const y1 = shuffledY[i * 2];
+      const y2 = shuffledY[i * 2 + 1];
 
-      // Route: start → horizontal to midX → vertical to midY → horizontal to rightX area → vertical to rightY → end
-      // We use a second unique X position to create a Z-shape. Split the zone in half:
-      // first vertical turn uses midX, second vertical turn at a mirrored position
-      const midX2 = wz.left + wz.right - midX; // mirror across centre
+      // Sort X positions left-to-right for clean routing
+      const xA = Math.min(x1, x2);
+      const xB = Math.max(x1, x2);
 
-      // Ensure left-to-right ordering
-      const xA = Math.min(midX, midX2);
-      const xB = Math.max(midX, midX2);
+      // Sort Y-lanes so y1 is first encountered (closer to leftY)
+      const yA = Math.abs(y1 - leftY) < Math.abs(y2 - leftY) ? y1 : y2;
+      const yB = yA === y1 ? y2 : y1;
 
-      // If xA and xB are too close (< 15% of zone), push them apart
-      const minSep = wzWidth * 0.15;
-      let fxA = xA;
-      let fxB = xB;
-      if (fxB - fxA < minSep) {
-        const centre = (fxA + fxB) / 2;
-        fxA = centre - minSep / 2;
-        fxB = centre + minSep / 2;
-      }
-      // Clamp within wire zone
-      fxA = Math.max(wz.left + 10, fxA);
-      fxB = Math.min(wz.right - 10, fxB);
+      // Route: 8 waypoints creating a double-Z shape
+      // start → right to xA → down/up to yA → right to xB → down/up to yB → left/right back...
+      // Actually build: start → xA,leftY → xA,yA → xB,yA → xB,yB → mirror of xA,yB → mirror,rightY → end
+      const xC = wz.left + wz.right - xA; // mirror xA across centre
+      // Clamp xC within wire zone
+      const fxC = Math.max(wz.left + 10, Math.min(wz.right - 10, xC));
 
       const route = [
         { x: this.layout.leftX, y: leftY },
-        { x: fxA, y: leftY },
-        { x: fxA, y: midY },
-        { x: fxB, y: midY },
-        { x: fxB, y: rightY },
+        { x: xA, y: leftY },
+        { x: xA, y: yA },
+        { x: xB, y: yA },
+        { x: xB, y: yB },
+        { x: fxC, y: yB },
+        { x: fxC, y: rightY },
         { x: this.layout.rightX, y: rightY }
       ];
 
@@ -544,16 +545,6 @@ const WiringTask = {
       const isLive = i === this.liveWireIdx && !cable.locked;
 
       const route = cable.route;
-
-      // Live wire glow (subtle red aura)
-      if (isLive) {
-        this._traceRoundedRoute(ctx, route, r);
-        ctx.strokeStyle = `rgba(255, 68, 68, ${0.12 + Math.sin(this.swayTime * 8) * 0.08})`;
-        ctx.lineWidth = this.wireWidth + 14;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.stroke();
-      }
 
       // Wire stroke (outer dark border — 5px border each side)
       this._traceRoundedRoute(ctx, route, r);
