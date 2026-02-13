@@ -28,6 +28,9 @@ const WiringTask = {
     { name: 'Purple', hex: '#BB66FF', dark: '#7733AA' }
   ],
 
+  // Screw image
+  screwImg: null,
+
   // Wire style
   wireColor: '#222E34',
   wireStroke: '#0F171C',
@@ -97,6 +100,10 @@ const WiringTask = {
     const style = getComputedStyle(document.documentElement);
     this.colors.primary = style.getPropertyValue('--area-primary').trim() || this.colors.primary;
     this.colors.secondary1 = style.getPropertyValue('--area-secondary1').trim() || this.colors.secondary1;
+
+    // Load screw SVG for corner rivets
+    this.screwImg = new Image();
+    this.screwImg.src = '../assets/screw.svg';
 
     this.canvas = document.getElementById('wiring-canvas');
     this.ctx = this.canvas.getContext('2d');
@@ -451,28 +458,29 @@ const WiringTask = {
     ctx.fillStyle = 'rgba(254, 206, 84, 0.25)';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
-    ctx.fillText('JUNCTION BOX J-7', w * 0.5, h * 0.055);
+    ctx.fillText('JUNCTION BOX J-7', w * 0.5, h * 0.055 + 9);
 
-    // Rivets
-    const rivetR = Math.max(3, w * 0.006);
+    // Corner screws (draw SVG image at each corner)
+    const screwSize = Math.max(14, w * 0.022);
     const rp = w * 0.03;
-    [[rp, h * 0.05], [w - rp, h * 0.05], [rp, h - h * 0.05], [w - rp, h - h * 0.05]].forEach(([rx, ry]) => {
-      ctx.beginPath();
-      ctx.arc(rx, ry, rivetR, 0, Math.PI * 2);
-      ctx.fillStyle = this.colors.rivet;
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(rx - rivetR * 0.2, ry - rivetR * 0.3, rivetR * 0.3, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255,255,255,0.08)';
-      ctx.fill();
-    });
+    const screwPositions = [
+      [rp, h * 0.05],
+      [w - rp, h * 0.05],
+      [rp, h - h * 0.05],
+      [w - rp, h - h * 0.05]
+    ];
+    if (this.screwImg && this.screwImg.complete && this.screwImg.naturalWidth > 0) {
+      screwPositions.forEach(([sx, sy]) => {
+        ctx.drawImage(this.screwImg, sx - screwSize / 2, sy - screwSize / 2, screwSize, screwSize);
+      });
+    }
 
     ctx.font = `15px 'Bungee', sans-serif`;
     ctx.fillStyle = 'rgba(199, 224, 234, 0.4)';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
-    ctx.fillText('CABLES', this.layout.leftX, h * 0.055);
-    ctx.fillText('TERMINALS', this.layout.rightX, h * 0.055);
+    ctx.fillText('CABLE', this.layout.leftX, h * 0.055 + 9);
+    ctx.fillText('TERMINAL', this.layout.rightX, h * 0.055 + 9);
   },
 
   _drawHazardStripes(ctx, x, y, w, h) {
