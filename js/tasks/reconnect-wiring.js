@@ -448,10 +448,10 @@ const WiringTask = {
     this._drawHazardStripes(ctx, 0, h - h * 0.035, w, h * 0.035);
 
     ctx.font = `${Math.max(20, w * 0.028)}px 'Bungee', sans-serif`;
-    ctx.fillStyle = 'rgba(254, 206, 84, 0.12)';
+    ctx.fillStyle = 'rgba(254, 206, 84, 0.25)';
     ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('JUNCTION BOX J-7', w * 0.5, h * 0.5);
+    ctx.textBaseline = 'top';
+    ctx.fillText('JUNCTION BOX J-7', w * 0.5, h * 0.055);
 
     // Rivets
     const rivetR = Math.max(3, w * 0.006);
@@ -467,8 +467,8 @@ const WiringTask = {
       ctx.fill();
     });
 
-    ctx.font = `${Math.max(9, w * 0.012)}px 'PP Supply Mono', sans-serif`;
-    ctx.fillStyle = 'rgba(199, 224, 234, 0.3)';
+    ctx.font = `15px 'Bungee', sans-serif`;
+    ctx.fillStyle = 'rgba(199, 224, 234, 0.4)';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
     ctx.fillText('CABLES', this.layout.leftX, h * 0.055);
