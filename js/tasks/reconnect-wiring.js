@@ -170,8 +170,8 @@ const WiringTask = {
       bottom: h * 0.92
     };
 
-    const topMargin = h * 0.12;
-    const bottomMargin = h * 0.10;
+    const topMargin = h * 0.12 + 35;
+    const bottomMargin = h * 0.10 + 35;
     const usableH = h - topMargin - bottomMargin;
     const spacing = usableH / (this.CABLE_COUNT - 1);
 
@@ -447,11 +447,11 @@ const WiringTask = {
     this._drawHazardStripes(ctx, 0, 0, w, h * 0.035);
     this._drawHazardStripes(ctx, 0, h - h * 0.035, w, h * 0.035);
 
-    ctx.font = `${Math.max(10, w * 0.014)}px 'Bungee', sans-serif`;
-    ctx.fillStyle = 'rgba(254, 206, 84, 0.25)';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'top';
-    ctx.fillText('JUNCTION BOX J-7', w * 0.06, h * 0.055);
+    ctx.font = `${Math.max(20, w * 0.028)}px 'Bungee', sans-serif`;
+    ctx.fillStyle = 'rgba(254, 206, 84, 0.12)';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('JUNCTION BOX J-7', w * 0.5, h * 0.5);
 
     // Rivets
     const rivetR = Math.max(3, w * 0.006);
