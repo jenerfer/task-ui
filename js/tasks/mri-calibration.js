@@ -314,7 +314,7 @@ const MRITask = {
       ctx.shadowBlur = 0;
 
       // Progress arc showing time remaining
-      const progress = this.phase1.cooldownTimer / 8;
+      const progress = this.phase1.cooldownTimer / 5;
       ctx.beginPath();
       ctx.arc(cx, cy, w * 0.25, -Math.PI / 2, -Math.PI / 2 + (1 - progress) * Math.PI * 2);
       ctx.lineWidth = 3;
@@ -378,7 +378,7 @@ const MRITask = {
       // Trigger cooldown after 3 consecutive misses
       if (this.phase1.consecutiveMisses >= 3) {
         this.phase1.cooldownActive = true;
-        this.phase1.cooldownTimer = 8;
+        this.phase1.cooldownTimer = 5;
         AudioManager.play('miss'); // extra buzz for punishment
       }
     }
