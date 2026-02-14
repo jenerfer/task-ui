@@ -32,37 +32,18 @@
     .splice-topbar {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       width: 100%;
     }
 
     .splice-topbar__label {
       font-family: 'Bungee', sans-serif;
-      font-size: 18px;
+      font-size: 22px;
       letter-spacing: 0.5px;
       color: var(--text-heading);
       text-transform: uppercase;
     }
 
-    /* --- Attempt Pips --- */
-    .splice-attempts {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .attempt-pip {
-      width: 12px;
-      height: 28px;
-      border-radius: 4px;
-      background: #2A3337;
-      transition: background 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .attempt-pip.used {
-      background: #FF4444;
-      box-shadow: 0 0 10px rgba(255, 68, 68, 0.62);
-    }
 
     /* --- Strand Area --- */
     .strand-area {
@@ -404,11 +385,6 @@
         <div class="splice-layout">
           <div class="splice-topbar">
             <span class="splice-topbar__label" id="phase-label-1">Chloroplast Strand</span>
-            <div class="splice-attempts" id="attempts-1">
-              <div class="attempt-pip"></div>
-              <div class="attempt-pip"></div>
-              <div class="attempt-pip"></div>
-            </div>
           </div>
 
           <p class="instruction" id="instruction-1">Memorise the sequence...</p>
@@ -429,11 +405,6 @@
         <div class="splice-layout">
           <div class="splice-topbar">
             <span class="splice-topbar__label" id="phase-label-2">Root System Strand</span>
-            <div class="splice-attempts" id="attempts-2">
-              <div class="attempt-pip"></div>
-              <div class="attempt-pip"></div>
-              <div class="attempt-pip"></div>
-            </div>
           </div>
 
           <p class="instruction" id="instruction-2">Memorise the sequence...</p>
@@ -454,11 +425,6 @@
         <div class="splice-layout">
           <div class="splice-topbar">
             <span class="splice-topbar__label" id="phase-label-3">Pollen Core Strand</span>
-            <div class="splice-attempts" id="attempts-3">
-              <div class="attempt-pip"></div>
-              <div class="attempt-pip"></div>
-              <div class="attempt-pip"></div>
-            </div>
           </div>
 
           <p class="instruction" id="instruction-3">Memorise the sequence...</p>
@@ -479,11 +445,6 @@
         <div class="splice-layout">
           <div class="splice-topbar">
             <span class="splice-topbar__label" id="phase-label-4">Seed Vault Strand</span>
-            <div class="splice-attempts" id="attempts-4">
-              <div class="attempt-pip"></div>
-              <div class="attempt-pip"></div>
-              <div class="attempt-pip"></div>
-            </div>
           </div>
 
           <p class="instruction" id="instruction-4">Memorise the sequence...</p>
