@@ -16,6 +16,7 @@ const LockboxTask = {
   solved: false,
   revealing: false,    // true during staggered reveal animation
   inputLocked: false,  // true during reveal + solved + lockout
+  portalsTaskName: null, // e.g. 'lockbox1' from ?lockbox1 query string
 
   // --- DOM refs ---
   codeDigits: null,
@@ -38,6 +39,13 @@ const LockboxTask = {
     this.lockoutOverlay = document.getElementById('lockout-overlay');
     this.lockoutTimerEl = document.getElementById('lockout-timer');
     this.keypadBtns = document.querySelectorAll('#keypad .keypad-btn');
+
+    // Parse query string for Portals task name (e.g. ?lockbox1)
+    const search = window.location.search.replace('?', '');
+    if (search) {
+      this.portalsTaskName = search;
+      console.log('[LockboxTask] Portals task name:', this.portalsTaskName);
+    }
 
     // Generate secret code
     this._generateCode();
@@ -285,10 +293,33 @@ const LockboxTask = {
       d.classList.add('correct', 'solved');
     });
 
+    // Complete task in Portals if a task name was provided via query string
+    if (this.portalsTaskName) {
+      this._completePortalsTask(this.portalsTaskName);
+    }
+
     // Show completion after celebration
     setTimeout(() => {
       TaskShell.showCompletion('weapons-lockbox');
     }, 1200);
+  },
+
+  /**
+   * Send task completion to Portals via SDK
+   * @param {string} taskName - The Portals task name (e.g. 'lockbox1')
+   */
+  _completePortalsTask(taskName) {
+    const message = JSON.stringify({
+      TaskName: taskName,
+      TaskTargetState: 'SetAnyToCompleted'
+    });
+
+    if (typeof PortalsSdk !== 'undefined') {
+      PortalsSdk.sendMessageToUnity(message);
+      console.log('[LockboxTask] Portals task completed:', taskName);
+    } else {
+      console.info('[LockboxTask] PortalsSdk not available - running outside Portals');
+    }
   },
 
   _onLockout() {

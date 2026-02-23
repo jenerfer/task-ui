@@ -56,10 +56,16 @@ const TaskShell = {
     // Notify Unity
     this.bridge('onTaskClose');
 
-    // Remove after animation
+    // Remove after animation, then close Portals iframe
     setTimeout(() => {
       if (this.overlay) {
         this.overlay.style.display = 'none';
+      }
+
+      // Close the iframe if running inside Portals
+      if (typeof PortalsSdk !== 'undefined') {
+        PortalsSdk.closeIframe();
+        console.log('[TaskShell] Closed iframe via PortalsSdk');
       }
     }, 400);
   },
