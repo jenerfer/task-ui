@@ -40,11 +40,15 @@ const LockboxTask = {
     this.lockoutTimerEl = document.getElementById('lockout-timer');
     this.keypadBtns = document.querySelectorAll('#keypad .keypad-btn');
 
-    // Parse query string for Portals task name (e.g. ?lockbox1)
-    const search = window.location.search.replace('?', '');
-    if (search) {
-      this.portalsTaskName = search;
-      console.log('[LockboxTask] Portals task name:', this.portalsTaskName);
+    // Parse query string for Portals task name (e.g. ?lockbox1&maximized=true&...)
+    // The task name is a bare key (no value) matching the pattern "lockbox" + number
+    const params = new URLSearchParams(window.location.search);
+    for (const [key] of params) {
+      if (/^lockbox\d+$/.test(key)) {
+        this.portalsTaskName = key;
+        console.log('[LockboxTask] Portals task name:', this.portalsTaskName);
+        break;
+      }
     }
 
     // Generate secret code
