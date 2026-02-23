@@ -63,9 +63,13 @@ const TaskShell = {
       }
 
       // Close the iframe if running inside Portals
-      if (typeof PortalsSdk !== 'undefined') {
-        PortalsSdk.closeIframe();
-        console.log('[TaskShell] Closed iframe via PortalsSdk');
+      try {
+        if (typeof PortalsSdk !== 'undefined') {
+          PortalsSdk.closeIframe();
+          console.log('[TaskShell] Closed iframe via PortalsSdk');
+        }
+      } catch (e) {
+        console.warn('[TaskShell] Portals closeIframe failed (expected outside Portals):', e.message);
       }
     }, 400);
   },

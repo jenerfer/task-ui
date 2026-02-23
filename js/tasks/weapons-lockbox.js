@@ -318,11 +318,15 @@ const LockboxTask = {
       TaskTargetState: 'SetAnyToCompleted'
     });
 
-    if (typeof PortalsSdk !== 'undefined') {
-      PortalsSdk.sendMessageToUnity(message);
-      console.log('[LockboxTask] Portals task completed:', taskName);
-    } else {
-      console.info('[LockboxTask] PortalsSdk not available - running outside Portals');
+    try {
+      if (typeof PortalsSdk !== 'undefined') {
+        PortalsSdk.sendMessageToUnity(message);
+        console.log('[LockboxTask] Portals task completed:', taskName);
+      } else {
+        console.info('[LockboxTask] PortalsSdk not available - running outside Portals');
+      }
+    } catch (e) {
+      console.warn('[LockboxTask] Portals SDK call failed (expected outside Portals):', e.message);
     }
   },
 
