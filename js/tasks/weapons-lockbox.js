@@ -304,7 +304,7 @@ const LockboxTask = {
 
     // Show completion after celebration
     setTimeout(() => {
-      TaskShell.showCompletion('weapons-lockbox');
+      TaskShell.showCompletion(this.portalsTaskName || 'weapons-lockbox');
     }, 1200);
   },
 
