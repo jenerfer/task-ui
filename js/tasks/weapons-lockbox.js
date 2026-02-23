@@ -42,14 +42,17 @@ const LockboxTask = {
 
     // Parse query string for Portals task name (e.g. ?lockbox1&maximized=true&...)
     // The task name is a bare key (no value) matching the pattern "lockbox" + number
+    console.log('[LockboxTask] Raw search:', window.location.search);
     const params = new URLSearchParams(window.location.search);
-    for (const [key] of params) {
+    for (const [key, value] of params) {
+      console.log('[LockboxTask] Param:', key, '=', value);
       if (/^lockbox\d+$/.test(key)) {
         this.portalsTaskName = key;
-        console.log('[LockboxTask] Portals task name:', this.portalsTaskName);
         break;
       }
     }
+    console.log('[LockboxTask] Portals task name:', this.portalsTaskName);
+    console.log('[LockboxTask] PortalsSdk available:', typeof PortalsSdk !== 'undefined');
 
     // Generate secret code
     this._generateCode();
