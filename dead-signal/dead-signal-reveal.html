@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dead Signal — Impostor Reveal</title>
+  <link rel="stylesheet" href="https://jenerfer.github.io/Portals-Design-System/styles.css">
+  <style>
+
+    /* ===== Fonts ===== */
+
+    @font-face {
+      font-family: 'PP Supply Sans';
+      src: url('fonts/PPSupplySans-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Bungee';
+      src: url('fonts/Bungee-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* ===== Page Base ===== */
+
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      background: #0d1012;
+    }
+
+    /* ===== Background ===== */
+
+    .reveal-bg {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, #0d1012 0%, #091112 100%);
+      z-index: 0;
+    }
+
+    /* ===== Characters Row ===== */
+
+    .reveal-characters {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      pointer-events: none;
+    }
+
+    .reveal-character {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 -70px;
+      min-width: 0;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal-character--visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== Nametag ===== */
+
+    .reveal-nametag {
+      font-family: 'PP Supply Sans', monospace;
+      font-weight: 400;
+      font-size: 18px;
+      line-height: 18px;
+      color: #758595;
+      letter-spacing: 4.14px;
+      text-transform: uppercase;
+      text-shadow: 0px 3.542px 20.511px #080f15;
+      text-align: center;
+      white-space: nowrap;
+      margin-bottom: 40px;
+    }
+
+    /* ===== Character Image ===== */
+
+    .reveal-character__img {
+      height: 70vh;
+      width: auto;
+      display: block;
+      pointer-events: none;
+    }
+
+    /* ===== Role Text (Viewport Center) ===== */
+
+    .reveal-role {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+      width: 552px;
+      opacity: 0;
+      filter: drop-shadow(0px 34px 60.8px #000000);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      pointer-events: none;
+    }
+
+    .reveal-role--hidden {
+      transform: translate(-50%, -40%);
+    }
+
+    .reveal-role--visible {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+
+    .reveal-role__prefix {
+      font-family: 'PP Supply Sans', monospace;
+      font-weight: 400;
+      font-size: 22.341px;
+      line-height: 0.911;
+      color: #eff4fa;
+      letter-spacing: 5.1384px;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .reveal-role__title {
+      font-family: 'Bungee', cursive;
+      font-weight: 400;
+      font-size: 76px;
+      line-height: 0.911;
+      margin: 0;
+      background: linear-gradient(180deg, #ffffff 0%, #799cb1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ===== Countdown (Near Bottom) ===== */
+
+    .reveal-countdown {
+      position: fixed;
+      bottom: 69px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 23px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      pointer-events: none;
+    }
+
+    .reveal-countdown--hidden {
+      transform: translateX(-50%) translateY(20px);
+    }
+
+    .reveal-countdown--visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .reveal-countdown__label {
+      font-family: 'PP Supply Sans', monospace;
+      font-weight: 400;
+      font-size: 22.341px;
+      line-height: 0.911;
+      color: #eff4fa;
+      letter-spacing: 5.1384px;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .reveal-countdown__number {
+      font-family: 'PP Supply Sans', monospace;
+      font-weight: 400;
+      font-size: 50px;
+      line-height: 50px;
+      color: #eff4fa;
+      letter-spacing: 11.5px;
+      text-shadow: 0px 4.062px 23.519px #080f15;
+      margin: 0;
+    }
+
+    /* ===== Blackout Overlay ===== */
+
+    .reveal-blackout {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+    }
+
+    .reveal-blackout--active {
+      opacity: 1;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Background -->
+  <div class="reveal-bg"></div>
+
+  <!-- Characters row -->
+  <div class="reveal-characters" id="reveal-characters"></div>
+
+  <!-- Role reveal text -->
+  <div class="reveal-role reveal-role--hidden" id="reveal-role">
+    <p class="reveal-role__prefix">YOU ARE AN</p>
+    <h1 class="reveal-role__title">IMPOSTOR</h1>
+  </div>
+
+  <!-- Countdown -->
+  <div class="reveal-countdown reveal-countdown--hidden" id="reveal-countdown">
+    <p class="reveal-countdown__label">GET READY TO START</p>
+    <p class="reveal-countdown__number" id="countdown-number">5</p>
+  </div>
+
+  <!-- Fade to black -->
+  <div class="reveal-blackout" id="reveal-blackout"></div>
+
+  <script>
+    (function () {
+
+      /* ===== Config ===== */
+
+      var CHARACTER_TOTAL = 14;
+      var CHARACTER_PATH = 'assets/characters/char-';
+      var CHARACTER_EXT = '.png';
+
+      var NAMES = [
+        'VORTEX', 'CIPHER', 'GHOST', 'NOVA', 'FLUX',
+        'RAVEN', 'PULSE', 'DRIFT', 'SHARD', 'ECHO',
+        'WRAITH', 'STATIC', 'BLAZE', 'COMET', 'BYTE',
+        'SURGE', 'ORBIT', 'PRISM', 'VOID', 'NEXUS'
+      ];
+
+      /* ===== Utilities ===== */
+
+      function shuffle(arr) {
+        var a = arr.slice();
+        for (var i = a.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = a[i];
+          a[i] = a[j];
+          a[j] = tmp;
+        }
+        return a;
+      }
+
+      function pad(n) {
+        return n < 10 ? '0' + n : '' + n;
+      }
+
+      /* ===== Randomisation ===== */
+
+      var characterCount = 3 + Math.floor(Math.random() * 3); // 3, 4, or 5
+
+      var allIndices = [];
+      for (var i = 1; i <= CHARACTER_TOTAL; i++) allIndices.push(i);
+      var chosenIndices = shuffle(allIndices).slice(0, characterCount);
+
+      var chosenNames = shuffle(NAMES).slice(0, characterCount);
+
+      /* ===== Build Character DOM ===== */
+
+      var container = document.getElementById('reveal-characters');
+
+      for (var i = 0; i < characterCount; i++) {
+        var charDiv = document.createElement('div');
+        charDiv.className = 'reveal-character';
+
+        var nametag = document.createElement('span');
+        nametag.className = 'reveal-nametag';
+        nametag.textContent = chosenNames[i];
+
+        var img = document.createElement('img');
+        img.src = CHARACTER_PATH + pad(chosenIndices[i]) + CHARACTER_EXT;
+        img.alt = 'Character';
+        img.className = 'reveal-character__img';
+
+        charDiv.appendChild(nametag);
+        charDiv.appendChild(img);
+        container.appendChild(charDiv);
+      }
+
+      /* ===== Animation Sequence ===== */
+
+      var characters = document.querySelectorAll('.reveal-character');
+      var roleEl = document.getElementById('reveal-role');
+      var countdownEl = document.getElementById('reveal-countdown');
+      var countdownNumber = document.getElementById('countdown-number');
+      var blackoutEl = document.getElementById('reveal-blackout');
+
+      var initialDelay = 300;
+      var staggerDelay = 200;
+
+      // Step 1: Stagger character fade-in
+      characters.forEach(function (char, i) {
+        setTimeout(function () {
+          char.classList.add('reveal-character--visible');
+        }, initialDelay + i * staggerDelay);
+      });
+
+      // When last character finishes its transition
+      var allCharsReadyAt = initialDelay + (characters.length - 1) * staggerDelay + 600;
+
+      // Step 2: Fade in role text
+      var roleShowAt = allCharsReadyAt + 800;
+      setTimeout(function () {
+        roleEl.classList.remove('reveal-role--hidden');
+        roleEl.classList.add('reveal-role--visible');
+      }, roleShowAt);
+
+      // Step 3: Fade in countdown 2s after role text
+      var countdownShowAt = roleShowAt + 2000;
+      setTimeout(function () {
+        countdownEl.classList.remove('reveal-countdown--hidden');
+        countdownEl.classList.add('reveal-countdown--visible');
+      }, countdownShowAt);
+
+      // Step 4: Countdown from 5 to 0
+      var count = 5;
+      var countdownTickAt = countdownShowAt + 600;
+
+      setTimeout(function () {
+        var timer = setInterval(function () {
+          count--;
+          countdownNumber.textContent = count;
+          if (count <= 0) {
+            clearInterval(timer);
+            // Step 5: Fade to black
+            blackoutEl.classList.add('reveal-blackout--active');
+          }
+        }, 1000);
+      }, countdownTickAt);
+
+    })();
+  </script>
+
+</body>
+</html>
