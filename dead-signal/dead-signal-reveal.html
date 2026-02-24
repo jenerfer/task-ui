@@ -247,9 +247,13 @@
 
       /* ===== Config ===== */
 
-      var CHARACTER_TOTAL = 14;
-      var CHARACTER_PATH = 'assets/characters/char-';
-      var CHARACTER_EXT = '.png';
+      var CHARACTER_PATH = 'assets/characters2/';
+      var CHARACTERS = [
+        'color-beige.png', 'color-black.png', 'color-blue.png', 'color-brown.png',
+        'color-dark-green.png', 'color-dark-red.png', 'color-gold.png', 'color-grey.png',
+        'color-light-blue.png', 'color-light-green.png', 'color-orange.png', 'color-pink.png',
+        'color-purple.png', 'color-red.png', 'color-turquoise.png', 'color-white.png'
+      ];
 
       var NAMES = [
         'VORTEX', 'CIPHER', 'GHOST', 'NOVA', 'FLUX',
@@ -271,17 +275,11 @@
         return a;
       }
 
-      function pad(n) {
-        return n < 10 ? '0' + n : '' + n;
-      }
-
       /* ===== Randomisation ===== */
 
       var characterCount = 3 + Math.floor(Math.random() * 3); // 3, 4, or 5
 
-      var allIndices = [];
-      for (var i = 1; i <= CHARACTER_TOTAL; i++) allIndices.push(i);
-      var chosenIndices = shuffle(allIndices).slice(0, characterCount);
+      var chosenChars = shuffle(CHARACTERS).slice(0, characterCount);
 
       var chosenNames = shuffle(NAMES).slice(0, characterCount);
 
@@ -298,7 +296,7 @@
         nametag.textContent = chosenNames[i];
 
         var img = document.createElement('img');
-        img.src = CHARACTER_PATH + pad(chosenIndices[i]) + CHARACTER_EXT;
+        img.src = CHARACTER_PATH + chosenChars[i];
         img.alt = 'Character';
         img.className = 'reveal-character__img';
 
