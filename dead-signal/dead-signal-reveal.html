@@ -33,7 +33,7 @@
       overflow: hidden;
       width: 100vw;
       height: 100vh;
-      background: #0d1012;
+      background: #091011;
     }
 
     /* ===== Background ===== */
@@ -43,6 +43,19 @@
       inset: 0;
       background: linear-gradient(180deg, #0d1012 0%, #091112 100%);
       z-index: 0;
+    }
+
+    /* ===== Swirl Background ===== */
+
+    .reveal-swirl {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: 104vh;
+      width: auto;
+      z-index: 0;
+      pointer-events: none;
     }
 
     /* ===== Characters Row ===== */
@@ -223,6 +236,9 @@
 
   <!-- Background -->
   <div class="reveal-bg"></div>
+
+  <!-- Swirl -->
+  <img class="reveal-swirl" src="assets/swirl.svg" alt="">
 
   <!-- Characters row -->
   <div class="reveal-characters" id="reveal-characters"></div>
